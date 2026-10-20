@@ -1,0 +1,55 @@
+services:
+  # ===== Base de données MariaDB =====
+  mariadb:
+    image: mariadb:10.11
+    container_name: skull-mariadb
+    environment:
+      MARIADB_DATABASE: skull
+      MARIADB_USER: skull
+      MARIADB_PASSWORD: skull
+      MARIADB_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - skull-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===== PlayerService =====
+  player-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skull-player-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/skull
+      SPRING_DATASOURCE_USERNAME: skull
+      SPRING_DATASOURCE_PASSWORD: skull
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+    networks:
+      - skull-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  mariadb-data:
+    driver: local
+
+networks:
+  skull-network:
+    driver: bridge
