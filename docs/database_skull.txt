@@ -1,0 +1,122 @@
+-- =====================================================
+-- Script SQL - Projet Skull
+-- Base de données : MariaDB
+-- =====================================================
+
+-- 1. Table Joueur
+CREATE TABLE Joueur (
+                        Id_Joueur BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        email VARCHAR(255) UNIQUE NOT NULL,
+                        motDePasse VARCHAR(255) NOT NULL,
+                        role VARCHAR(50) NOT NULL DEFAULT 'PLAYER',
+                        banni BOOLEAN NOT NULL DEFAULT FALSE,
+                        dateInscription DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Table Apparence
+CREATE TABLE Apparence (
+                           Id_Apparence BIGINT AUTO_INCREMENT PRIMARY KEY,
+                           nom VARCHAR(100) NOT NULL,
+                           prix INT NOT NULL,
+                           image VARCHAR(255),
+                           description VARCHAR(255)
+);
+
+-- 3. Table Partie (Dépend de Joueur pour le créateur)
+CREATE TABLE Partie (
+                        Id_Partie BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        statut VARCHAR(50) NOT NULL,
+                        nbJoueurs INT NOT NULL,
+                        nbIA INT NOT NULL DEFAULT 0,
+                        dateCreation DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        dateFin DATETIME,
+                        Id_Createur BIGINT NOT NULL,
+                        CONSTRAINT fk_partie_createur FOREIGN KEY (Id_Createur) REFERENCES Joueur(Id_Joueur)
+);
+
+-- 4. Table Tuile (Dépend de Partie et Joueur)
+CREATE TABLE Tuile (
+                       Id_Tuile BIGINT AUTO_INCREMENT PRIMARY KEY,
+                       type VARCHAR(20) NOT NULL,
+                       position_ INT NOT NULL,
+                       faceCachee BOOLEAN NOT NULL DEFAULT TRUE,
+                       Id_Partie BIGINT NOT NULL,
+                       Id_Joueur BIGINT, -- NULL si c'est une IA
+                       CONSTRAINT fk_tuile_partie FOREIGN KEY (Id_Partie) REFERENCES Partie(Id_Partie),
+                       CONSTRAINT fk_tuile_joueur FOREIGN KEY (Id_Joueur) REFERENCES Joueur(Id_Joueur)
+);
+
+-- 5. Table Participation (Dépend de Partie et Joueur)
+CREATE TABLE Participation (
+                               Id_Participation BIGINT AUTO_INCREMENT PRIMARY KEY,
+                               score INT NOT NULL DEFAULT 0,
+                               tuilesRestantes INT NOT NULL DEFAULT 4,
+                               estIA BOOLEAN NOT NULL DEFAULT FALSE,
+                               aQuitte BOOLEAN NOT NULL DEFAULT FALSE,
+                               Id_Partie BIGINT NOT NULL,
+                               Id_Joueur BIGINT, -- NULL si c'est une IA
+                               CONSTRAINT fk_participation_partie FOREIGN KEY (Id_Partie) REFERENCES Partie(Id_Partie),
+                               CONSTRAINT fk_participation_joueur FOREIGN KEY (Id_Joueur) REFERENCES Joueur(Id_Joueur)
+);
+
+-- 6. Table Enchere (Dépend de Partie et Joueur)
+CREATE TABLE Enchere (
+                         Id_Enchere BIGINT AUTO_INCREMENT PRIMARY KEY,
+                         valeur INT NOT NULL,
+                         manche INT NOT NULL,
+                         dateEnchere DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         Id_Partie BIGINT NOT NULL,
+                         Id_Joueur BIGINT NOT NULL,
+                         CONSTRAINT fk_enchere_partie FOREIGN KEY (Id_Partie) REFERENCES Partie(Id_Partie),
+                         CONSTRAINT fk_enchere_joueur FOREIGN KEY (Id_Joueur) REFERENCES Joueur(Id_Joueur)
+);
+
+-- 7. Table Signalement (Dépend de Joueur x2 et Partie)
+CREATE TABLE Signalement (
+                             Id_Signalement BIGINT AUTO_INCREMENT PRIMARY KEY,
+                             raison VARCHAR(100) NOT NULL,
+                             dateSignalement DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                             traite BOOLEAN NOT NULL DEFAULT FALSE,
+                             Id_Signaleur BIGINT NOT NULL,
+                             Id_Signale BIGINT NOT NULL,
+                             Id_Partie BIGINT NOT NULL,
+                             CONSTRAINT fk_signalement_signaleur FOREIGN KEY (Id_Signaleur) REFERENCES Joueur(Id_Joueur),
+                             CONSTRAINT fk_signalement_signale FOREIGN KEY (Id_Signale) REFERENCES Joueur(Id_Joueur),
+                             CONSTRAINT fk_signalement_partie FOREIGN KEY (Id_Partie) REFERENCES Partie(Id_Partie)
+);
+
+-- 8. Table Possession (Dépend de Joueur et Apparence)
+CREATE TABLE Possession (
+                            Id_Possession BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            dateAchat DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            Id_Joueur BIGINT NOT NULL,
+                            Id_Apparence BIGINT NOT NULL,
+                            CONSTRAINT fk_possession_joueur FOREIGN KEY (Id_Joueur) REFERENCES Joueur(Id_Joueur),
+                            CONSTRAINT fk_possession_apparence FOREIGN KEY (Id_Apparence) REFERENCES Apparence(Id_Apparence)
+);
+
+-- 9. Table Transaction (Dépend de Joueur et Apparence)
+CREATE TABLE Transaction (
+                             Id_Transaction BIGINT AUTO_INCREMENT PRIMARY KEY,
+                             operation VARCHAR(100) NOT NULL,
+                             reponse VARCHAR(50),
+                             statut VARCHAR(20) NOT NULL,
+                             dateTransaction DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                             Id_Joueur BIGINT NOT NULL,
+                             Id_Apparence BIGINT NOT NULL,
+                             CONSTRAINT fk_transaction_joueur FOREIGN KEY (Id_Joueur) REFERENCES Joueur(Id_Joueur),
+                             CONSTRAINT fk_transaction_apparence FOREIGN KEY (Id_Apparence) REFERENCES Apparence(Id_Apparence)
+);
+
+-- 10. Table Historique (Dépend de Partie et Joueur)
+CREATE TABLE Historique (
+                            Id_Historique BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            scoreFinal INT NOT NULL,
+                            tuilesRestantes INT NOT NULL,
+                            estVainqueur BOOLEAN NOT NULL,
+                            dateFin DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            Id_Partie BIGINT NOT NULL,
+                            Id_Joueur BIGINT NOT NULL,
+                            CONSTRAINT fk_historique_partie FOREIGN KEY (Id_Partie) REFERENCES Partie(Id_Partie),
+                            CONSTRAINT fk_historique_joueur FOREIGN KEY (Id_Joueur) REFERENCES Joueur(Id_Joueur)
+);
