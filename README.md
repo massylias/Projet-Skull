@@ -26,7 +26,7 @@ Ce projet est une application web complète permettant de jouer au jeu de bluff 
 
 Pour lancer l'infrastructure locale (Base de données + Application) , consultez le guide dédié :
 
-- **[Guide de démarrage Docker](docs/README-DOCKER.md)**
+- **[Guide de démarrage Docker](docs/README.md)**
 
 ##  Identifiants de test (Environnement local)
 
@@ -42,7 +42,7 @@ Pour faciliter les tests, voici les identifiants configurés dans l'environnemen
 
 ##  Documentation du Projet
 
-- [Guide Docker](docs/README-DOCKER.md)
+- [Guide Docker](docs/README.md)
 - [Modélisation (MCD, MLD, Script SQL de référence)](docs/)
 
 
