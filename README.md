@@ -48,11 +48,13 @@ Pour faciliter les tests, voici les identifiants configurés dans l'environnemen
 
 ##  Structure des Lots
 
-- **Lot 1** : Architecture, PlayerService (Inscription/Connexion/Compte Administrateur), Persistance et Docker.
+- **Lot 1** : Architecture et Interfaces des services, PlayerService (Inscription / Connexion / Compte Administrateur), Persistance des donneés et conteneurisation de base Docker.
 
-- **Lot 2** : Spring Security, GameService (Règles du jeu, IA), LadderService (Classement).
 
-- **Lot 3** : MarketService (Apparences), Front-end complet, OpenAPI, Rapport final.
+- **Lot 2** : Spring Security et JWT, GameService (création, jonction et sortie de partie, règles de Skull, IA simple), LadderService (historique et classement), signalement et bannissement.
+
+
+- **Lot 3** : MarketService (achat d'apparences par opération mathématique), Interface complète, spécification OpenAPI,  environnement Docker complet, Rapport final.
 
 ---
 ##  Dépendances du Projet
