@@ -52,5 +52,16 @@ public class PlayerController {
                 .orElse(ResponseEntity.status(401).body("Identifiants invalides"));
     }
 
+    // Bannir un joueur par son ID
+    @PutMapping("/{id}/ban")
+    public ResponseEntity<Player> banPlayer(@PathVariable Long id) {
+        try {
+            Player playerBanni = playerService.banPlayer(id);
+            return ResponseEntity.ok(playerBanni);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 }
