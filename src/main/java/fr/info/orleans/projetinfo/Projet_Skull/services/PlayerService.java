@@ -28,13 +28,15 @@ public class PlayerService {
         return playerRepository.findById(id);
     }
 
-    // Trouver un joueur par son nom d'utilisateur
-    public Optional<Player> getPlayerByUsername(String username) {
-        return playerRepository.findByUsername(username);
+    // Trouver un joueur par son email
+    public Optional<Player> getPlayerByEmail(String email) {
+        return playerRepository.findByEmail(email);
     }
 
     // Enregistrer ou mettre à jour un joueur (utile pour l'inscription)
     public Player savePlayer(Player player) {
+            player.setId(null);
+
         return playerRepository.save(player);
     }
 

@@ -32,9 +32,25 @@ public class PlayerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Créer un nouveau joueur (Inscription de base)
-    @PostMapping
-    public Player createPlayer(@RequestBody Player player) {
+
+    // Inscription d'un joueur (/api/players/register)
+    @PostMapping("/register")
+    public Player registerPlayer(@RequestBody Player player) {
+        // Les valeurs par défaut (rôle USER, banni = false, dateInscription)
+        // sont gérées automatiquement par l'entité grâce à @PrePersist
         return playerService.savePlayer(player);
     }
+
+    // Connexion (/api/players/login)
+    @PostMapping("/login")
+    public ResponseEntity<String> loginPlayer(@RequestBody Player loginRequest) {
+        return playerService.getAllPlayers().stream()
+                .filter(p -> p.getEmail().equals(loginRequest.getEmail()) &&
+                        p.getMotDePasse().equals(loginRequest.getMotDePasse()))
+                .findFirst()
+                .map(p -> ResponseEntity.ok("Connexion réussie pour : " + p.getEmail()))
+                .orElse(ResponseEntity.status(401).body("Identifiants invalides"));
+    }
+
+
 }
