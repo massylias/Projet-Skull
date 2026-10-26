@@ -15,7 +15,7 @@ public interface PlayerService {
 
     Player savePlayer(Player player);
 
-    void deletePlayer(Long id);
-
     Player banPlayer(Long id);
+
+    Player debanPlayer(Long id);
 }

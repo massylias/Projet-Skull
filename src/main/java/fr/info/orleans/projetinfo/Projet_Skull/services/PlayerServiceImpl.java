@@ -38,10 +38,6 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.save(player);
     }
 
-    @Override
-    public void deletePlayer(Long id) {
-        playerRepository.deleteById(id);
-    }
 
     @Override
     public Player banPlayer(Long id) {
@@ -49,6 +45,15 @@ public class PlayerServiceImpl implements PlayerService {
                 .orElseThrow(() -> new RuntimeException("Joueur non trouvé avec l'id : " + id));
 
         player.setBanni(true);
+        return playerRepository.save(player);
+    }
+
+    @Override
+    public Player debanPlayer(Long id) {
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Joueur non trouva avec l'id : " + id));
+
+        player.setBanni(false);
         return playerRepository.save(player);
     }
 

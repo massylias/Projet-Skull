@@ -63,5 +63,15 @@ public class PlayerController {
         }
     }
 
+    @PutMapping("/{id}/deban")
+    public ResponseEntity<Player> banPlayer(@PathVariable Long id, @RequestBody Player banRequest) {
+        try {
+            Player playerBanni = playerService.debanPlayer(id);
+            return ResponseEntity.ok(playerBanni);
+        }catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 }
