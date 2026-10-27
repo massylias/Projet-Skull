@@ -1,10 +1,12 @@
-package fr.info.orleans.projetinfo.Projet_Skull.services;
+package fr.info.orleans.projetinfo.Projet_Skull.services.impl;
 
 import fr.info.orleans.projetinfo.Projet_Skull.dtos.LoginRequest;
 import fr.info.orleans.projetinfo.Projet_Skull.dtos.PlayerDTO;
 import fr.info.orleans.projetinfo.Projet_Skull.dtos.RegisterRequest;
 import fr.info.orleans.projetinfo.Projet_Skull.model.Player;
 import fr.info.orleans.projetinfo.Projet_Skull.repository.PlayerRepository;
+import fr.info.orleans.projetinfo.Projet_Skull.services.PlayerService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +16,12 @@ import java.util.stream.Collectors;
 public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerRepository playerRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public PlayerServiceImpl(PlayerRepository playerRepository) {
+    public PlayerServiceImpl(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
         this.playerRepository = playerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -48,7 +52,7 @@ public class PlayerServiceImpl implements PlayerService {
         }
         Player player = new Player();
         player.setEmail(registerRequest.getEmail());
-        player.setMotDePasse((registerRequest.getPassword()));
+        player.setMotDePasse(passwordEncoder.encode(registerRequest.getPassword()));
         player.setRole("USER");
         player.setBanni(false);
 
@@ -62,11 +66,11 @@ public class PlayerServiceImpl implements PlayerService {
         Player player = playerRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(()-> new RuntimeException("Email ou mot de passe incorrect"));
 
-        if (!loginRequest.getPassword().equals(player.getMotDePasse())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), player.getMotDePasse())) {
             throw new RuntimeException("Email ou mot de passe incorrect");
         }
         if (player.getBanni()) {
-            throw new RuntimeException("Le compte de ce  joueur est banni");
+            throw new RuntimeException("Le compte de ce  joueur a été banni");
         }
         return mapToDTO(player);
 
