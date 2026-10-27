@@ -44,6 +44,8 @@ Pour faciliter les tests, voici les identifiants configurés dans l'environnemen
 
 - [Guide Docker](docs/README.md)
 - [Modélisation (MCD, MLD, Script SQL de référence)](docs/)
+- [Diagrammes](docs/diagrammes/images)
+- [Persistance de données](docs/tests/rapport-persistance.md)
 
 
 ##  Structure des Lots
@@ -59,7 +61,7 @@ Pour faciliter les tests, voici les identifiants configurés dans l'environnemen
 ---
 ##  Dépendances du Projet
 
-Le projet utilise **Spring Boot 4.1.1** avec les dépendances Maven suivantes, configurées dans le fichier `pom.xml` :
+Le projet utilise **Spring Boot 3.2.4** avec les dépendances Maven suivantes, configurées dans le fichier `pom.xml` :
 
 ###  Spring Web (API REST)
 
@@ -102,8 +104,8 @@ Le projet utilise **Spring Boot 4.1.1** avec les dépendances Maven suivantes, c
 
 Utilisation de Swagger afin de tester l'ajout, le bannissement et récuperer les joueurs
 
-**Adresse utilisé** : http://localhost:8081/swagger-ui/index.html#/
+**Adresse utilisé** : http://localhost:8080/swagger-ui/index.html#/
 
-**Pour savoir les joueurs présent dans la base de données** : http://localhost:8081/api/players
+**Pour savoir les joueurs présent dans la base de données** : http://localhost:8080/api/players
 
 
