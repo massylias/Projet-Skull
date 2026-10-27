@@ -19,7 +19,6 @@ public class Player {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Le mot de passe est obligatoire")
     @Column(nullable = false)
     private String motDePasse;
 

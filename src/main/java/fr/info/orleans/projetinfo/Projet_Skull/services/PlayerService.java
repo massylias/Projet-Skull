@@ -1,21 +1,31 @@
 package fr.info.orleans.projetinfo.Projet_Skull.services;
 
-import fr.info.orleans.projetinfo.Projet_Skull.model.Player;
+import fr.info.orleans.projetinfo.Projet_Skull.dtos.LoginRequest;
+import fr.info.orleans.projetinfo.Projet_Skull.dtos.PlayerDTO;
+import fr.info.orleans.projetinfo.Projet_Skull.dtos.RegisterRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PlayerService {
 
-    List<Player> getAllPlayers();
+    // Lister tous les joueurs
+    List<PlayerDTO> getAllPlayers();
 
-    Optional<Player> getPlayerById(Long id);
+    // Récupérer un joueur par ID
+    PlayerDTO getPlayerById(Long id);
 
-    Optional<Player> getPlayerByEmail(String email);
+    // Récupérer un joueur par son email
+    PlayerDTO getPlayerByEmail(String email);
 
-    Player savePlayer(Player player);
+    // Inscription
+    PlayerDTO savePlayer(RegisterRequest registerRequest);
 
-    Player banPlayer(Long id);
+    // Connexion
+    PlayerDTO loginPlayer(LoginRequest loginRequest);
 
-    Player debanPlayer(Long id);
+    // Bannir un joueur (Admin)
+    void banPlayer(Long id);
+
+    // Débannir un joueur (Admin)
+    void debanPlayer(Long id);
 }

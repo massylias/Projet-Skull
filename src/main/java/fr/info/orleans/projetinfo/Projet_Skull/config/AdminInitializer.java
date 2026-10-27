@@ -13,17 +13,18 @@ public class AdminInitializer {
     CommandLineRunner initAdmin(PlayerRepository playerRepository) {
         return args -> {
             // On vérifie si un admin existe déjà
-            boolean adminExists = playerRepository.findAll().stream()
-                    .anyMatch(player -> "ADMIN".equalsIgnoreCase(player.getRole()));
+           if (playerRepository.findByEmail("admin@projet-skull.com").isEmpty()) {
 
-            if (!adminExists) {
-                Player admin = new Player();
-                admin.setEmail("admin@projet-skull.com");
-                admin.setMotDePasse("admin123");
-                admin.setRole("ADMIN");
+               Player admin = new Player();
+               admin.setEmail("admin@projet-skull.com");
+               admin.setMotDePasse("admin123");
+               admin.setRole("ADMIN");
+               admin.setBanni(false);
+               playerRepository.save(admin);
 
-                playerRepository.save(admin);
-                System.out.println(">>> Compte administrateur créé avec succès au démarrage !");
+               System.out.println(">>> Compte administrateur créé avec succès au démarrage !");
+           } else {
+               System.out.println(">>> Le compte administrateur existe déjà");
             }
         };
     }
