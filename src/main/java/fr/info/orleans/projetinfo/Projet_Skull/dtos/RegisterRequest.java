@@ -14,6 +14,14 @@ public class RegisterRequest {
     @Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères")
     private String password;
 
+    public RegisterRequest() {
+    }
+
+    public RegisterRequest(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 

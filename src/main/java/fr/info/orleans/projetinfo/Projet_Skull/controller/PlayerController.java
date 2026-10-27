@@ -1,7 +1,10 @@
 package fr.info.orleans.projetinfo.Projet_Skull.controller;
-import fr.info.orleans.projetinfo.Projet_Skull.model.Player;
+import fr.info.orleans.projetinfo.Projet_Skull.dtos.LoginRequest;
+import fr.info.orleans.projetinfo.Projet_Skull.dtos.PlayerDTO;
+import fr.info.orleans.projetinfo.Projet_Skull.dtos.RegisterRequest;
 import fr.info.orleans.projetinfo.Projet_Skull.services.PlayerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,65 +16,49 @@ public class PlayerController {
 
     private final PlayerService playerService;
 
-    @Autowired
+
     public PlayerController(PlayerService playerService) {
         this.playerService = playerService;
     }
 
     // Récupérer la liste de tous les joueurs
     @GetMapping
-    public List<Player> getAllPlayers() {
-        return playerService.getAllPlayers();
+    public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
+        return ResponseEntity.ok(playerService.getAllPlayers());
     }
 
     // Récupérer un joueur par son ID
     @GetMapping("/{id}")
-    public ResponseEntity<Player> getPlayerById(@PathVariable Long id) {
-        return playerService.getPlayerById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PlayerDTO> getPlayerById(@PathVariable Long id) {
+        return ResponseEntity.ok(playerService.getPlayerById(id));
     }
 
 
     // Inscription d'un joueur (/api/players/register)
     @PostMapping("/register")
-    public Player registerPlayer(@RequestBody Player player) {
-        // Les valeurs par défaut (rôle USER, banni = false, dateInscription)
-        // sont gérées automatiquement par l'entité grâce à @PrePersist
-        return playerService.savePlayer(player);
+    public ResponseEntity<PlayerDTO> registerPlayer(@Valid @RequestBody RegisterRequest registerRequest) {
+        PlayerDTO player = playerService.savePlayer(registerRequest);
+        return new ResponseEntity<>(player, HttpStatus.CREATED);
     }
 
     // Connexion (/api/players/login)
     @PostMapping("/login")
-    public ResponseEntity<String> loginPlayer(@RequestBody Player loginRequest) {
-        return playerService.getAllPlayers().stream()
-                .filter(p -> p.getEmail().equals(loginRequest.getEmail()) &&
-                        p.getMotDePasse().equals(loginRequest.getMotDePasse()))
-                .findFirst()
-                .map(p -> ResponseEntity.ok("Connexion réussie pour : " + p.getEmail()))
-                .orElse(ResponseEntity.status(401).body("Identifiants invalides"));
+    public ResponseEntity<PlayerDTO> loginPlayer(@Valid @RequestBody LoginRequest loginRequest) {
+        PlayerDTO player = playerService.loginPlayer(loginRequest);
+        return ResponseEntity.ok(player);
     }
 
     // Bannir un joueur par son ID
     @PutMapping("/{id}/ban")
-    public ResponseEntity<Player> banPlayer(@PathVariable Long id) {
-        try {
-            Player playerBanni = playerService.banPlayer(id);
-            return ResponseEntity.ok(playerBanni);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    public ResponseEntity<Void> banPlayer(@PathVariable Long id) {
+        playerService.banPlayer(id);
+        return ResponseEntity.noContent().build();
 
+    }
+    // Débannir un joueur par son ID
     @PutMapping("/{id}/deban")
-    public ResponseEntity<Player> banPlayer(@PathVariable Long id, @RequestBody Player banRequest) {
-        try {
-            Player playerBanni = playerService.debanPlayer(id);
-            return ResponseEntity.ok(playerBanni);
-        }catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> debanPlayer(@PathVariable Long id) {
+      playerService.debanPlayer(id);
+      return ResponseEntity.noContent().build();
         }
     }
-
-
-}
