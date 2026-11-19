@@ -29,7 +29,7 @@ docker compose up -d --build
 
 - Test Spring Boot :
 ``` bash
-http://localhost:8080/actuator/health 
+http://localhost:8081/actuator/health 
 ```
 (doit afficher "db": {"status": "UP"})
 

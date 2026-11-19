@@ -49,6 +49,9 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
+                        //  Routes Actuator (Publiques pour le monitoring)
+                        .requestMatchers("/actuator/**").permitAll() //
+
                         // Routes réservées à l'admin (Bannissement)
                         .requestMatchers("/api/players/*/ban", "/api/players/*/deban").hasRole("ADMIN")
 
