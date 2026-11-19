@@ -5,29 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02ea610d-87d2-49fa-a30b-81edb07a05b6" name="Changes" comment="feat: Mise en place du JWT avec clé">
-      <change afterPath="$PROJECT_DIR$/player-service/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/mvnw.cmd" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/CustomUserDetailsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/jwt/JwtAuthentificationFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/jwt/JwtService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/dtos/LoginResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/ProjetSkullApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/config/AdminInitializer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/controller/PlayerController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/model/Player.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/repository/PlayerRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/GameService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/LadderService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/MarketService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/PlayerService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/PlayerServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/fr/info/orleans/projetinfo/Projet_Skull/ProjetSkullApplicationTests.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/controller/PlayerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/controller/PlayerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/PlayerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/PlayerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/impl/PlayerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/impl/PlayerServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,6 +96,9 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
     "run.configurations.included.in.services": "true",
     "settings.editor.selected.configurable": "MavenSettings",
     "vue.rearranger.settings.migration": "true"
@@ -184,7 +172,7 @@
       <workItem from="1793782280630" duration="785000" />
       <workItem from="1793870685083" duration="595000" />
       <workItem from="1794921880950" duration="34677000" />
-      <workItem from="1795085367355" duration="16863000" />
+      <workItem from="1795085367355" duration="24685000" />
     </task>
     <task id="LOCAL-00001" summary="Réorganisation de la structure et Initialisation du Projet Spring Boot">
       <option name="closed" value="true" />
@@ -290,7 +278,15 @@
       <option name="project" value="LOCAL" />
       <updated>1795094456832</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="feat: Mise en place du JWT avec clé">
+      <option name="closed" value="true" />
+      <created>1795107987363</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1795107987363</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -1,5 +1,6 @@
 package fr.info.orleans.projetinfo.player.controller;
 import fr.info.orleans.projetinfo.player.dtos.LoginRequest;
+import fr.info.orleans.projetinfo.player.dtos.LoginResponse;
 import fr.info.orleans.projetinfo.player.dtos.PlayerDTO;
 import fr.info.orleans.projetinfo.player.dtos.RegisterRequest;
 import fr.info.orleans.projetinfo.player.services.PlayerService;
@@ -40,12 +41,21 @@ public class PlayerController {
         PlayerDTO player = playerService.savePlayer(registerRequest);
         return new ResponseEntity<>(player, HttpStatus.CREATED);
     }
-
+    /*
+     [Endpoint Avant la Sécurisation et JWT]
     // Connexion (/api/players/login)
     @PostMapping("/login")
     public ResponseEntity<PlayerDTO> loginPlayer(@Valid @RequestBody LoginRequest loginRequest) {
         PlayerDTO player = playerService.loginPlayer(loginRequest);
         return ResponseEntity.ok(player);
+    }
+     */
+
+    // Connexion (/api/players/login)  [(Avec la Sécurisation et JWT)]
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) { // <-- Changé en LoginResponse
+        LoginResponse response = playerService.loginPlayer(loginRequest);
+        return ResponseEntity.ok(response);
     }
 
     // Bannir un joueur par son ID

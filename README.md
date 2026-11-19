@@ -83,6 +83,9 @@ Le projet utilise **Spring Boot 3.2.4** avec les dépendances Maven suivantes, c
 ###  Spring Security Crypto
 - **Artifact** : `spring-security-crypto`
 - **Rôle** : Fournit l'algorithme de hachage **BCrypt** pour sécuriser les mots de passe. *(Spring Security complet sera ajouté au Lot 2 pour l'authentification JWT).*
+### JJWT (Java JWT)
+- **Artifact** : `jjwt-api`, `jjwt-impl`, `jjwt-jackson`
+- **Rôle** : Permet de créer, signer et vérifier des tokens JWT (JSON Web Token). 
 
 ###  Springdoc OpenAPI (Swagger UI)
 - **Artifact** : `springdoc-openapi-starter-webmvc-ui` (v2.8.5)
