@@ -104,8 +104,8 @@ Le projet utilise **Spring Boot 3.2.4** avec les dépendances Maven suivantes, c
 
 Utilisation de Swagger afin de tester l'ajout, le bannissement et récuperer les joueurs
 
-**Adresse utilisé** : http://localhost:8080/swagger-ui/index.html#/
+**Adresse utilisé** : http://localhost:8081/swagger-ui/index.html#/
 
-**Pour savoir les joueurs présent dans la base de données** : http://localhost:8080/api/players
+**Pour savoir les joueurs présent dans la base de données** : http://localhost:8081/api/players
 
 

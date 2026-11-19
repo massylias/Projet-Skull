@@ -23,11 +23,11 @@ services:
   # ===== PlayerService =====
   player-service:
     build:
-      context: .
+      context: ./player-service
       dockerfile: Dockerfile
     container_name: skull-player-service
     ports:
-      - "8080:8080"
+      - "8081:8080"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -45,6 +45,46 @@ services:
       interval: 30s
       timeout: 3s
       retries: 3
+
+  # ===== GameService =====
+  game-service:
+    build:
+      context: ./game-service
+      dockerfile: Dockerfile
+    container_name: skull-game-service
+    ports:
+      - "8082:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/skull
+      SPRING_DATASOURCE_USERNAME: skull
+      SPRING_DATASOURCE_PASSWORD: skull
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - skull-network
+    restart: unless-stopped
+
+  # ===== LadderService =====
+  ladder-service:
+    build:
+      context: ./ladder-service
+      dockerfile: Dockerfile
+    container_name: skull-ladder-service
+    ports:
+      - "8083:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/skull
+      SPRING_DATASOURCE_USERNAME: skull
+      SPRING_DATASOURCE_PASSWORD: skull
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - skull-network
+    restart: unless-stopped
 
 volumes:
   mariadb-data:
