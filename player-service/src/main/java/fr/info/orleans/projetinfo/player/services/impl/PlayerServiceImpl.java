@@ -1,11 +1,17 @@
 package fr.info.orleans.projetinfo.player.services.impl;
 
+import fr.info.orleans.projetinfo.player.config.CustomUserDetailsService;
 import fr.info.orleans.projetinfo.player.dtos.LoginRequest;
+import fr.info.orleans.projetinfo.player.dtos.LoginResponse;
 import fr.info.orleans.projetinfo.player.dtos.PlayerDTO;
 import fr.info.orleans.projetinfo.player.dtos.RegisterRequest;
+import fr.info.orleans.projetinfo.player.jwt.JwtService;
 import fr.info.orleans.projetinfo.player.model.Player;
 import fr.info.orleans.projetinfo.player.repository.PlayerRepository;
 import fr.info.orleans.projetinfo.player.services.PlayerService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +24,18 @@ public class PlayerServiceImpl implements PlayerService {
     private final PlayerRepository playerRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthenticationManager authenticationManager;
+    private final JwtService  jwtService;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
+
+    public PlayerServiceImpl(PlayerRepository playerRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, CustomUserDetailsService customUserDetailsService) {
         this.playerRepository = playerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.customUserDetailsService = customUserDetailsService;
+
     }
 
     @Override
@@ -60,6 +74,8 @@ public class PlayerServiceImpl implements PlayerService {
         return mapToDTO(savedPlayer);
     }
 
+    /*
+     Méthode Avant Sécurisation et JWT
     @Override
     public PlayerDTO loginPlayer(LoginRequest loginRequest) {
 
@@ -75,6 +91,33 @@ public class PlayerServiceImpl implements PlayerService {
         return mapToDTO(player);
 
     }
+
+     */
+
+    // [Avec la Sécurisation et JWT]
+    @Override
+    public LoginResponse loginPlayer(LoginRequest loginRequest) {
+        // 1. Authentifier le joueur (vérifie email + mot de passe)
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        // 2. Charger les détails de l'utilisateur
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getEmail());
+
+        // 3. Générer le token JWT
+        String token = jwtService.generateToken(userDetails);
+
+        // 4. Récupérer les infos du joueur (via ton service existant)
+        PlayerDTO player = getPlayerByEmail(loginRequest.getEmail());
+
+        // 5. Retourner la réponse
+        return new LoginResponse(token, player);
+    }
+
 
 
     @Override

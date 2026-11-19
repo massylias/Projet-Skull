@@ -1,6 +1,7 @@
 package fr.info.orleans.projetinfo.player.services;
 
 import fr.info.orleans.projetinfo.player.dtos.LoginRequest;
+import fr.info.orleans.projetinfo.player.dtos.LoginResponse;
 import fr.info.orleans.projetinfo.player.dtos.PlayerDTO;
 import fr.info.orleans.projetinfo.player.dtos.RegisterRequest;
 
@@ -20,8 +21,14 @@ public interface PlayerService {
     // Inscription
     PlayerDTO savePlayer(RegisterRequest registerRequest);
 
+    /*
+    [(Avant la Sécurisation et JWT)]
     // Connexion
-    PlayerDTO loginPlayer(LoginRequest loginRequest);
+    //PlayerDTO loginPlayer(LoginRequest loginRequest);
+    */
+
+    // Connexion [(Avec Sécurisation et JWT)]
+    LoginResponse loginPlayer(LoginRequest loginRequest);
 
     // Bannir un joueur (Admin)
     void banPlayer(Long id);

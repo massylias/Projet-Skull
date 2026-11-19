@@ -4,126 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02ea610d-87d2-49fa-a30b-81edb07a05b6" name="Changes" comment="  Changement de structure et Ajout des Projets SpringBoots manquants + leurs Dockerfiles">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/java/fr/info/orleans/projetinfo/game/GameServiceApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/java/fr/info/orleans/projetinfo/game/controller/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/java/fr/info/orleans/projetinfo/game/dtos/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/java/fr/info/orleans/projetinfo/game/exceptions/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/java/fr/info/orleans/projetinfo/game/model/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/java/fr/info/orleans/projetinfo/game/repository/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/java/fr/info/orleans/projetinfo/game/services/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/java/fr/info/orleans/projetinfo/game/services/GameService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game-service/src/test/java/fr/info/orleans/projetinfo/game/GameServiceApplicationTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/mvnw.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/java/fr/info/orleans/projetinfo/ladder/LadderServiceApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/java/fr/info/orleans/projetinfo/ladder/controller/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/java/fr/info/orleans/projetinfo/ladder/dtos/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/java/fr/info/orleans/projetinfo/ladder/exceptions/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/java/fr/info/orleans/projetinfo/ladder/model/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/java/fr/info/orleans/projetinfo/ladder/repository/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/java/fr/info/orleans/projetinfo/ladder/services/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/java/fr/info/orleans/projetinfo/ladder/services/LadderService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ladder-service/src/test/java/fr/info/orleans/projetinfo/ladder/LadderServiceApplicationTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/mvnw.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/java/fr/info/orleans/projetinfo/market/MarketServiceApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/java/fr/info/orleans/projetinfo/market/controller/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/java/fr/info/orleans/projetinfo/market/dtos/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/java/fr/info/orleans/projetinfo/market/exceptions/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/java/fr/info/orleans/projetinfo/market/model/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/java/fr/info/orleans/projetinfo/market/repository/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/java/fr/info/orleans/projetinfo/market/services/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/java/fr/info/orleans/projetinfo/market/services/MarketService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/market-service/src/test/java/fr/info/orleans/projetinfo/market/MarketServiceApplicationTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/mvnw.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/PlayerServiceApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/AdminInitializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/SecurityConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/controller/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/controller/PlayerController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/dtos/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/dtos/LoginRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/dtos/PlayerDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/dtos/RegisterRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/exceptions/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/model/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/model/Player.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/repository/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/repository/PlayerRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/PlayerService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/impl/PlayerServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player-service/src/test/java/fr/info/orleans/projetinfo/player/PlayerServiceApplicationTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/ProjetSkullApplication.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/config/AdminInitializer.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/controller/PlayerController.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/model/Player.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/repository/PlayerRepository.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/GameService.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/LadderService.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/MarketService.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/PlayerService.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/fr/info/orleans/projetinfo/Projet_Skull/services/PlayerServiceImpl.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/test-classes/fr/info/orleans/projetinfo/Projet_Skull/ProjetSkullApplicationTests.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/game-service/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/game-service/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/Dockerfile" afterDir="false" />
+    <list default="true" id="02ea610d-87d2-49fa-a30b-81edb07a05b6" name="Changes" comment="feat: Mise en place du JWT avec clé">
+      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/CustomUserDetailsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/dtos/LoginResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/game-service/mvnw" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/game-service/mvnw.cmd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/ProjetSkullApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/config/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/config/AdminInitializer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/config/SecurityConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/controller/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/controller/PlayerController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/dtos/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/dtos/LoginRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/dtos/PlayerDTO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/dtos/RegisterRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/exceptions/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/model/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/model/Player.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/repository/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/repository/PlayerRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/services/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/services/GameService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/services/LadderService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/services/MarketService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/services/PlayerService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/info/orleans/projetinfo/Projet_Skull/services/impl/PlayerServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/fr/info/orleans/projetinfo/Projet_Skull/ProjetSkullApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/controller/PlayerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/controller/PlayerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/PlayerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/PlayerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/impl/PlayerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/player-service/src/main/java/fr/info/orleans/projetinfo/player/services/impl/PlayerServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,7 +88,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.ProjetSkullApplication.executor": "Run",
-    "git-widget-placeholder": "test",
+    "git-widget-placeholder": "feature/securisation-jwt",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/onaho/Documents/Projet-Skull",
     "node.js.detected.package.eslint": "true",
@@ -207,6 +96,9 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
     "run.configurations.included.in.services": "true",
     "settings.editor.selected.configurable": "MavenSettings",
     "vue.rearranger.settings.migration": "true"
@@ -280,7 +172,7 @@
       <workItem from="1793782280630" duration="785000" />
       <workItem from="1793870685083" duration="595000" />
       <workItem from="1794921880950" duration="34677000" />
-      <workItem from="1795085367355" duration="8105000" />
+      <workItem from="1795085367355" duration="24685000" />
     </task>
     <task id="LOCAL-00001" summary="Réorganisation de la structure et Initialisation du Projet Spring Boot">
       <option name="closed" value="true" />
@@ -378,7 +270,23 @@
       <option name="project" value="LOCAL" />
       <updated>1793139736823</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="  Changement de structure et Ajout des Projets SpringBoots manquants + leurs Dockerfiles">
+      <option name="closed" value="true" />
+      <created>1795094456832</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1795094456832</updated>
+    </task>
+    <task id="LOCAL-00014" summary="feat: Mise en place du JWT avec clé">
+      <option name="closed" value="true" />
+      <created>1795107987363</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1795107987363</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -407,6 +315,7 @@
     <MESSAGE value="Ajout du hashage pour le mot de passe" />
     <MESSAGE value="fix : Reconfiguration du port pour Swagger" />
     <MESSAGE value="  Changement de structure et Ajout des Projets SpringBoots manquants + leurs Dockerfiles" />
-    <option name="LAST_COMMIT_MESSAGE" value="  Changement de structure et Ajout des Projets SpringBoots manquants + leurs Dockerfiles" />
+    <MESSAGE value="feat: Mise en place du JWT avec clé" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Mise en place du JWT avec clé" />
   </component>
 </project>
