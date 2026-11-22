@@ -70,11 +70,11 @@ public class Participation {
     }
 
     public int getTuilesResistantes() {
-        return tuilesResistantes;
+        return tuilesRestantes;
     }
 
     public void setTuilesResistantes(int tuilesResistantes) {
-        this.tuilesResistantes = tuilesResistantes;
+        this.tuilesRestantes = tuilesResistantes;
     }
 
     public int getPosition() {
