@@ -12,7 +12,7 @@ public class Enchere {
     private Long id;
 
     @Column(nullable = false)
-    private Long idpartie;
+    private Long idPartie;
 
     @Column(nullable = false)
     private Long idParticipation;
@@ -27,17 +27,17 @@ public class Enchere {
     private boolean retire = false;
 
     @Column(nullable = false)
-    LocalDateTime dateEnchere = LocalDateTime.now();
+    private LocalDateTime dateEnchere = LocalDateTime.now();
 
     public Enchere() {
     }
 
-    public Long getIdpartie() {
-        return idpartie;
+    public Long getIdPartie() {
+        return idPartie;
     }
 
-    public void setIdpartie(Long idpartie) {
-        this.idpartie = idpartie;
+    public void setIdPartie(Long idpartie) {
+        this.idPartie = idpartie;
     }
 
     public Long getIdParticipation() {
