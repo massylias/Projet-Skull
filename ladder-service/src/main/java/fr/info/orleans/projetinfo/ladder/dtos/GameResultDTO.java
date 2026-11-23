@@ -1,5 +1,7 @@
 package fr.info.orleans.projetinfo.ladder.dtos;
 
+import java.time.LocalDateTime;
+
 public class GameResultDTO {
 
     private Long idPartie;
@@ -7,15 +9,17 @@ public class GameResultDTO {
     private int scoreFinal;
     private int tuilesRestantes;
     private boolean estVainqueur;
+    private LocalDateTime dateFin;
 
     public GameResultDTO() {}
 
-    public GameResultDTO(Long idPartie, Long idJoueur, int scoreFinal, int tuilesRestantes, boolean estVainqueur) {
+    public GameResultDTO(Long idPartie, Long idJoueur, int scoreFinal, int tuilesRestantes, boolean estVainqueur, LocalDateTime dateFin) {
         this.idPartie = idPartie;
         this.idJoueur = idJoueur;
         this.scoreFinal = scoreFinal;
         this.tuilesRestantes = tuilesRestantes;
         this.estVainqueur = estVainqueur;
+        this.dateFin = dateFin;
     }
 
     public Long getIdPartie() { return idPartie; }
@@ -32,4 +36,7 @@ public class GameResultDTO {
 
     public boolean isEstVainqueur() { return estVainqueur; }
     public void setEstVainqueur(boolean estVainqueur) { this.estVainqueur = estVainqueur; }
+
+    public LocalDateTime getDateFin() { return dateFin; }
+    public void setDateFin(LocalDateTime dateFin) { this.dateFin = dateFin; }
 }

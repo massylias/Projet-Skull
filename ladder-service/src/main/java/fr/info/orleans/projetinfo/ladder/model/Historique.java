@@ -1,6 +1,7 @@
 package fr.info.orleans.projetinfo.ladder.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "historique")
@@ -15,15 +16,17 @@ public class Historique {
     private boolean estVainqueur;
     private Long idJoueur;
     private Long idPartie;
+    private LocalDateTime dateFin;
 
     public Historique() {}
 
-    public Historique(int scoreFinal, int tuilesRestantes, boolean estVainqueur, Long idJoueur, Long idPartie) {
+    public Historique(int scoreFinal, int tuilesRestantes, boolean estVainqueur, Long idJoueur, Long idPartie, LocalDateTime dateFin) {
         this.scoreFinal = scoreFinal;
         this.tuilesRestantes = tuilesRestantes;
         this.estVainqueur = estVainqueur;
         this.idJoueur = idJoueur;
         this.idPartie = idPartie;
+        this.dateFin = dateFin;
     }
 
     public Long getId() { return id; }
@@ -43,4 +46,7 @@ public class Historique {
 
     public Long getIdPartie() { return idPartie; }
     public void setIdPartie(Long idPartie) { this.idPartie = idPartie; }
+
+    public LocalDateTime getDateFin() { return dateFin; }
+    public void setDateFin(LocalDateTime dateFin) { this.dateFin = dateFin; }
 }
