@@ -69,12 +69,12 @@ public class Participation {
         this.score = score;
     }
 
-    public int getTuilesResistantes() {
+    public int getTuilesRestantes() {
         return tuilesRestantes;
     }
 
-    public void setTuilesResistantes(int tuilesResistantes) {
-        this.tuilesRestantes = tuilesResistantes;
+    public void setTuilesRestantes(int tuilesRestantes) {
+        this.tuilesRestantes = tuilesRestantes;
     }
 
     public int getPosition() {

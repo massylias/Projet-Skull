@@ -37,7 +37,7 @@ public class Signalement {
     }
 
     public void setIdPartie(Long idPartie) {
-        idPartie = idPartie;
+        this.idPartie = idPartie;
     }
 
     public Long getIdJoueurSignale() {

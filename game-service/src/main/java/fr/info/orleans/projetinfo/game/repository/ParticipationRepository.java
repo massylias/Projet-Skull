@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
-    List<Participation> findByIdPartieOrderByPositionTableAsc(Long idPartie);
+    List<Participation> findByIdPartieOrderByPositionAsc(Long idPartie);
 
     Optional<Participation> findByIdPartieAndIdJoueur(Long idPartie, Long idJoueur);
 
