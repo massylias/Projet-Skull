@@ -1,10 +1,11 @@
-package fr.info.orleans.projetinfo.ladder.services;
+package fr.info.orleans.projetinfo.ladder.services.impl;
 
 import fr.info.orleans.projetinfo.ladder.dtos.GameHistoryDTO;
 import fr.info.orleans.projetinfo.ladder.dtos.GameResultDTO;
 import fr.info.orleans.projetinfo.ladder.dtos.PlayerStatsDTO;
 import fr.info.orleans.projetinfo.ladder.model.Historique;
 import fr.info.orleans.projetinfo.ladder.repository.HistoriqueRepository;
+import fr.info.orleans.projetinfo.ladder.services.LadderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -70,7 +71,7 @@ public class LadderServiceImpl implements LadderService {
                 })
                 //  Tri du classement : par victoires décroissantes, puis par score moyen décroissant
                 .sorted(Comparator.comparingInt(PlayerStatsDTO::getTotalVictoires).reversed()
-                        .thenComparingDouble(PlayerStatsDTO::getScoreMoyen).reversed())
+                        .thenComparingDouble(PlayerStatsDTO::getScoreMoyen))
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +93,7 @@ public class LadderServiceImpl implements LadderService {
 
             // on convertit chaque gameHistorique en GameResultDTO
             List<GameResultDTO> resultDtos = gameHistoriques.stream()
-                    .filter(h -> h.getIdJoueur().equals(playerId)) //filtre qui permet de recuperer uniquement les stats du joueurs par partie
+                   
                     .map(h -> {
                 GameResultDTO rDto = new GameResultDTO();
                 rDto.setIdJoueur(h.getIdJoueur());
