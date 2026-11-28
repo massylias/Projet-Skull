@@ -103,6 +103,7 @@ Le projet utilise **Spring Boot 3.2.4** avec les dépendances Maven suivantes, c
 - **Artifact** : `spring-boot-starter-test`
 - **Rôle** : Fournit les outils de test (JUnit 5, Mockito, MockMvc, AssertJ) pour les tests unitaires et d'intégration.
 
+
 ### Pour tester PlayerService 
 
 Utilisation de Swagger afin de tester l'ajout, le bannissement et récuperer les joueurs
@@ -110,5 +111,17 @@ Utilisation de Swagger afin de tester l'ajout, le bannissement et récuperer les
 **Adresse utilisé** : http://localhost:8081/swagger-ui/index.html#/
 
 **Pour savoir les joueurs présent dans la base de données** : http://localhost:8081/api/players
+
+### Pour tester GameService
+Utilisation de Swagger afin de tester la création, la participation, le déroulement d'une partie (pose de tuiles, enchères, défis) et le signalement d'un joueur.
+
+**Adresse utilisé** : http://localhost:8082/swagger-ui/index.html#/
+
+### Pour tester LadderService
+
+Utilisation de Swagger afin de tester la récupération du classement général, la consultation des statistiques d'un joueur et la mise à jour des points après une partie.
+
+**Adresse utilisé** : http://localhost:8083/swagger-ui/index.html#/
+
 
 
