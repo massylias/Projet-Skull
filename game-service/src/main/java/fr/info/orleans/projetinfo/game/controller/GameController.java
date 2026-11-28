@@ -62,5 +62,14 @@ public class GameController {
         gameService.playTuile(id, idJoueur);
         return ResponseEntity.ok().build();
     }
+
+    // Lancer une enchère
+    @PostMapping("/{id}/bid")
+    public ResponseEntity<Void> bid(@PathVariable Long id,
+                                    @RequestParam Long idJoueur,
+                                    @RequestParam int montant) {
+        gameService.bid(id, idJoueur, montant);
+        return ResponseEntity.ok().build();
+    }
 }
 

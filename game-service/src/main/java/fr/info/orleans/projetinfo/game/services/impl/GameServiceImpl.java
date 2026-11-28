@@ -4,6 +4,7 @@ import fr.info.orleans.projetinfo.game.dtos.CreateGameRequest;
 import fr.info.orleans.projetinfo.game.dtos.GameDTO;
 import fr.info.orleans.projetinfo.game.dtos.JoinGameRequest;
 import fr.info.orleans.projetinfo.game.model.*;
+import fr.info.orleans.projetinfo.game.repository.EnchereRepository;
 import fr.info.orleans.projetinfo.game.repository.ParticipationRepository;
 import fr.info.orleans.projetinfo.game.repository.PartieRepository;
 import fr.info.orleans.projetinfo.game.repository.TuileRepository;
@@ -22,10 +23,13 @@ public class GameServiceImpl implements GameService {
 
     private final TuileRepository tuileRepository;
 
-    public GameServiceImpl(PartieRepository partieRepository, ParticipationRepository participationRepository,  TuileRepository tuileRepository) {
+    private final EnchereRepository enchereRepository;
+
+    public GameServiceImpl(PartieRepository partieRepository, ParticipationRepository participationRepository,  TuileRepository tuileRepository,  EnchereRepository enchereRepository) {
         this.partieRepository = partieRepository;
         this.participationRepository = participationRepository;
         this.tuileRepository = tuileRepository;
+        this.enchereRepository = enchereRepository;
     }
 
     @Override
@@ -95,11 +99,6 @@ public class GameServiceImpl implements GameService {
         participation.setPosition((int) nbParticipants); // Position suivante
         participationRepository.save(participation);
 
-        //  Si la partie est pleine, on pourrait la lancer (optionnel pour l'instant)
-        if (nbParticipants + 1 == partie.getNbJoueurs()) {
-            partie.setStatut(StatutPartie.EN_COURS);
-            partieRepository.save(partie);
-        }
     }
 
     @Override
@@ -198,4 +197,34 @@ public class GameServiceImpl implements GameService {
         participation.setTuilesRestantes(participation.getTuilesRestantes() - 1);
         participationRepository.save(participation);
     }
+    // Méthode pour lancer une enchère
+    @Override
+    @Transactional
+    public void bid(Long idPartie, Long idJoueur, int montant) {
+        Partie partie = partieRepository.findById(idPartie)
+                .orElseThrow(() -> new RuntimeException("Partie introuvable"));
+
+        if (partie.getStatut() != StatutPartie.EN_COURS) {
+            throw new RuntimeException("La partie n'est pas en cours");
+        }
+
+        // Vérifier que l'enchère est plus haute que la précédente
+        if (partie.getEnchereMax() != null && montant <= partie.getEnchereMax()) {
+            throw new RuntimeException("L'enchère doit être supérieure à l'enchère actuelle");
+        }
+
+        // Enregistrer l'enchère
+        Enchere enchere = new Enchere();
+        enchere.setIdPartie(idPartie);
+        enchere.setIdJoueur(idJoueur);
+        enchere.setValeur(montant);
+        enchere.setManche(partie.getMancheCourante());
+        enchereRepository.save(enchere);
+
+        // Mettre à jour la partie
+        partie.setEnchereMax(montant);
+        partie.setJoueurCourant(partie.getJoueurCourant() + 1); // Simplifié
+        partieRepository.save(partie);
+    }
+
 }

@@ -25,4 +25,7 @@ public interface GameService {
 
     // Poser une tuile
     void playTuile(Long idPartie, Long idJoueur);
+
+    // Lancer une enchère
+    void bid(Long idPartie, Long idJoueur, int montant);
 }
