@@ -314,10 +314,46 @@ public class GameServiceImpl implements GameService {
             participation.setScore(participation.getScore() + 1);
             participationRepository.save(participation);
         }
+        //   Vérification de Victoire ou d'Éliminations
+        verifierFinDePartie(partie);
 
         // Réinitialiser la manche (remettre les tuiles en main, passer à la manche suivante)
-        resetManche(partie);
+        if (partie.getStatut() == StatutPartie.EN_COURS) {
+            resetManche(partie);
+        }
+
     }
+    private void verifierFinDePartie(Partie partie) {
+        List<Participation> participations = participationRepository.findByIdPartieOrderByPositionAsc(partie.getId());
+
+        long nbJoueursActifs = 0;
+        for (Participation p : participations) {
+            // Victoire : 2 points
+            if (p.getScore() >= 2) {
+                partie.setStatut(StatutPartie.TERMINEE);
+                partie.setDateFin(java.time.LocalDateTime.now());
+                partieRepository.save(partie);
+                System.out.println(">>> PARTIE TERMINÉE : Le joueur " + p.getIdJoueur() + " a gagné !");
+                return;
+            }
+            // Élimination : plus de tuiles
+            if (p.getTuilesRestantes() <= 0) {
+                p.setaQuitte(true);
+                participationRepository.save(p);
+            } else {
+                nbJoueursActifs++;
+            }
+        }
+
+        // Si un seul joueur actif, il gagne par forfait
+        if (nbJoueursActifs <= 1) {
+            partie.setStatut(StatutPartie.TERMINEE);
+            partie.setDateFin(java.time.LocalDateTime.now());
+            partieRepository.save(partie);
+            System.out.println(">>> PARTIE TERMINÉE : Il ne reste qu'un joueur.");
+        }
+    }
+
 
     private void resetManche(Partie partie) {
         // Remettre toutes les tuiles en main
