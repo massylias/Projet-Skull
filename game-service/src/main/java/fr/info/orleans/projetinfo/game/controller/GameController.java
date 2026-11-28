@@ -2,9 +2,9 @@ package fr.info.orleans.projetinfo.game.controller;
 
 import fr.info.orleans.projetinfo.game.dtos.CreateGameRequest;
 import fr.info.orleans.projetinfo.game.dtos.GameDTO;
+import fr.info.orleans.projetinfo.game.dtos.GameStateDTO;
 import fr.info.orleans.projetinfo.game.dtos.JoinGameRequest;
 import fr.info.orleans.projetinfo.game.services.GameService;
-import fr.info.orleans.projetinfo.game.services.IaService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +15,9 @@ import java.util.List;
 @RequestMapping("/api/games")
 public class GameController {
     private final GameService gameService;
-    private final IaService iaService;
 
-    public GameController(GameService gameService, IaService iaService) {
+    public GameController(GameService gameService) {
         this.gameService = gameService;
-        this.iaService = iaService;
     }
 
     // Créer une partie
@@ -33,6 +31,13 @@ public class GameController {
     @GetMapping
     public ResponseEntity<List<GameDTO>> getGames() {
         return ResponseEntity.ok(gameService.getGames());
+    }
+
+    //
+    @GetMapping("/{id}")
+    public ResponseEntity<GameStateDTO> getGameState(@PathVariable Long id,
+                                                     @RequestParam(required = false) Long idJoueur) {
+        return ResponseEntity.ok(gameService.getGameState(id, idJoueur));
     }
 
     // Rejoindre une partie
@@ -87,13 +92,6 @@ public class GameController {
                                              @RequestParam Long idJoueur,
                                              @RequestParam int nombreTuiles) {
         gameService.resoudreDefi(id, idJoueur, nombreTuiles);
-        return ResponseEntity.ok().build();
-    }
-
-    // Faire jouer l'IA
-    @PostMapping("/{id}/ia-jouer")
-    public ResponseEntity<Void> iaJouer(@PathVariable Long id, @RequestParam Long idJoueurIa) {
-        iaService.jouerTour(id, idJoueurIa);
         return ResponseEntity.ok().build();
     }
 

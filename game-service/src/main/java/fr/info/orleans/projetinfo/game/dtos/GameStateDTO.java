@@ -1,7 +1,6 @@
 package fr.info.orleans.projetinfo.game.dtos;
 
 import fr.info.orleans.projetinfo.game.model.PhaseDeJeu;
-import fr.info.orleans.projetinfo.game.model.PhaseDeJeu;
 import fr.info.orleans.projetinfo.game.model.StatutPartie;
 import fr.info.orleans.projetinfo.game.model.TypeTuile;
 

@@ -2,6 +2,7 @@ package fr.info.orleans.projetinfo.game.services;
 
 import fr.info.orleans.projetinfo.game.dtos.CreateGameRequest;
 import fr.info.orleans.projetinfo.game.dtos.GameDTO;
+import fr.info.orleans.projetinfo.game.dtos.GameStateDTO;
 import fr.info.orleans.projetinfo.game.dtos.JoinGameRequest;
 
 import java.util.List;
@@ -19,6 +20,9 @@ public interface GameService {
 
     //Quitter une partie
     void leaveGame(Long idPartie, Long idJoueur);
+
+    // État de la partie
+    GameStateDTO getGameState(Long idPartie, Long idJoueur);
 
     // Commencer la partie
     void startGame(Long idPartie);

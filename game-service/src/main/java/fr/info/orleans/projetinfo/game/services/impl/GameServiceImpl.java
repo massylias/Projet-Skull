@@ -1,11 +1,10 @@
 package fr.info.orleans.projetinfo.game.services.impl;
 
-import fr.info.orleans.projetinfo.game.dtos.CreateGameRequest;
-import fr.info.orleans.projetinfo.game.dtos.GameDTO;
-import fr.info.orleans.projetinfo.game.dtos.JoinGameRequest;
+import fr.info.orleans.projetinfo.game.dtos.*;
 import fr.info.orleans.projetinfo.game.model.*;
 import fr.info.orleans.projetinfo.game.repository.*;
 import fr.info.orleans.projetinfo.game.services.GameService;
+import fr.info.orleans.projetinfo.game.services.IaService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +24,16 @@ public class GameServiceImpl implements GameService {
 
     private final SignalementRepository signalementRepository;
 
-    public GameServiceImpl(PartieRepository partieRepository, ParticipationRepository participationRepository,  TuileRepository tuileRepository,  EnchereRepository enchereRepository, SignalementRepository signalementRepository) {
+    private final IaService iaService;
+
+    public GameServiceImpl(PartieRepository partieRepository, ParticipationRepository participationRepository,  TuileRepository tuileRepository,  EnchereRepository enchereRepository, SignalementRepository signalementRepository,
+                           IaService iaService) {
         this.partieRepository = partieRepository;
         this.participationRepository = participationRepository;
         this.tuileRepository = tuileRepository;
         this.enchereRepository = enchereRepository;
         this.signalementRepository = signalementRepository;
+        this.iaService = iaService;
     }
 
     @Override
@@ -123,7 +126,46 @@ public class GameServiceImpl implements GameService {
             participationRepository.delete(participation);
         }
     }
+    // Méthode pour l'état de la partie
+    @Override
+    public GameStateDTO getGameState(Long idPartie, Long idJoueur) {
+        Partie partie = partieRepository.findById(idPartie)
+                .orElseThrow(() -> new RuntimeException("Partie introuvable"));
 
+        List<Participation> participations = participationRepository.findByIdPartieOrderByPositionAsc(idPartie);
+        List<ParticipantDTO> participantDTOs = participations.stream().map(p -> {
+            int nbPosees = (int) tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(idPartie, p.getIdJoueur())
+                    .stream().filter(t -> !t.isFaceCachee()).count();
+            return new ParticipantDTO(
+                    p.getPosition(),
+                    p.getIdJoueur(),
+                    p.isEstIa(),
+                    p.isaQuitte(),
+                    p.getScore(),
+                    p.getTuilesRestantes(),
+                    nbPosees
+            );
+        }).toList();
+
+        List<TypeTuile> mesTuilesPosees = (idJoueur != null)
+                ? tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(idPartie, idJoueur)
+                .stream()
+                .filter(t -> !t.isFaceCachee())
+                .map(Tuile::getType)
+                .toList()
+                : List.of();
+
+        return new GameStateDTO(
+                partie.getId(),
+                partie.getStatut(),
+                partie.getPhase(),
+                partie.getMancheCourante(),
+                partie.getJoueurCourant(),
+                partie.getEnchereMax(),
+                participantDTOs,
+                mesTuilesPosees
+        );
+    }
     // Méthode pour démarrer la partie
     @Override
     @Transactional
@@ -170,7 +212,23 @@ public class GameServiceImpl implements GameService {
         partie.setMancheCourante(1);
         partie.setJoueurCourant(0);
         partieRepository.save(partie);
+
+        // Si le joueur en position 0 est une IA, elle joue immédiatement
+        if (!participations.isEmpty() && participations.get(0).isEstIa()) {
+            PlayActionRequest coupIa = iaService.deciderCoup(idPartie, participations.get(0).getIdJoueur());
+            executerPose(partie, participations.get(0).getIdJoueur(), coupIa.getTypeTuile());
+            passerAuJoueurSuivant(partie);
+        }
     }
+
+    private void verifierTourJoueur(Partie partie, Long idJoueur) {
+        List<Participation> participants = participationRepository.findByIdPartieOrderByPositionAsc(partie.getId());
+        int indexCourant = (partie.getJoueurCourant() == null ? 0 : partie.getJoueurCourant());
+        if (indexCourant >= participants.size() || !participants.get(indexCourant).getIdJoueur().equals(idJoueur)) {
+            throw new RuntimeException("Ce n'est pas votre tour");
+        }
+    }
+
 
     @Override
     @Transactional
@@ -178,26 +236,15 @@ public class GameServiceImpl implements GameService {
         Partie partie = partieRepository.findById(idPartie)
                 .orElseThrow(() -> new RuntimeException("Partie introuvable"));
 
-        if (partie.getStatut() != StatutPartie.EN_COURS) {
-            throw new RuntimeException("La partie n'est pas en cours");
+        if (partie.getStatut() != StatutPartie.EN_COURS || partie.getPhase() != PhaseDeJeu.POSE) {
+            throw new RuntimeException("Impossible de poser une tuile actuellement");
         }
+        verifierTourJoueur(partie, idJoueur);
 
-        List<Tuile> tuiles = tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(idPartie, idJoueur);
-
-        Tuile tuileAPoser = tuiles.stream()
-                .filter(Tuile::isFaceCachee)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Vous n'avez plus de tuiles à poser"));
-
-        tuileAPoser.setFaceCachee(false);
-        tuileRepository.save(tuileAPoser);
-
-        Participation participation = participationRepository.findByIdPartieAndIdJoueur(idPartie, idJoueur)
-                .orElseThrow(() -> new RuntimeException("Participation introuvable"));
-
-        participation.setTuilesRestantes(participation.getTuilesRestantes() - 1);
-        participationRepository.save(participation);
+        executerPose(partie, idJoueur, null);
+        passerAuJoueurSuivant(partie);
     }
+
     // Méthode pour lancer une enchère
     @Override
     @Transactional
@@ -205,38 +252,15 @@ public class GameServiceImpl implements GameService {
         Partie partie = partieRepository.findById(idPartie)
                 .orElseThrow(() -> new RuntimeException("Partie introuvable"));
 
-        if (partie.getStatut() != StatutPartie.EN_COURS) {
-            throw new RuntimeException("La partie n'est pas en cours");
+        if (partie.getStatut() != StatutPartie.EN_COURS || partie.getPhase() == PhaseDeJeu.DEFI) {
+            throw new RuntimeException("Impossible d'enchérir actuellement");
         }
+        verifierTourJoueur(partie, idJoueur);
 
-        //  Vérifier l'enchère
-        int enchereActuelle = (partie.getEnchereMax() == null ? 0 : partie.getEnchereMax());
-        if (montant <= enchereActuelle) {
-            throw new RuntimeException("L'enchère doit être supérieure à l'enchère actuelle");
+        executerEnchere(partie, idJoueur, montant);
+        if (partie.getPhase() == PhaseDeJeu.ENCHERE) {
+            passerAuJoueurSuivant(partie);
         }
-
-        // Enregistrer l'enchère
-        Enchere enchere = new Enchere();
-        enchere.setIdPartie(idPartie);
-        enchere.setIdJoueur(idJoueur);
-        enchere.setValeur(montant);
-        enchere.setManche(partie.getMancheCourante());
-        enchereRepository.save(enchere);
-
-        // Mettre à jour la partie
-        partie.setEnchereMax(montant);
-
-
-        //  Éviter le null
-        int courant = (partie.getJoueurCourant() == null ? 0 : partie.getJoueurCourant());
-        partie.setJoueurCourant(courant + 1);
-
-        //  Passer en phase ENCHERE
-        partie.setPhase(PhaseDeJeu.ENCHERE);
-
-        partieRepository.save(partie);
-
-
     }
 
     // Méthode pour se retirer (lors d'une enchère)
@@ -246,36 +270,161 @@ public class GameServiceImpl implements GameService {
         Partie partie = partieRepository.findById(idPartie)
                 .orElseThrow(() -> new RuntimeException("Partie introuvable"));
 
-        if (partie.getStatut() != StatutPartie.EN_COURS) {
-            throw new RuntimeException("La partie n'est pas en cours");
+        if (partie.getStatut() != StatutPartie.EN_COURS || partie.getPhase() != PhaseDeJeu.ENCHERE) {
+            throw new RuntimeException("Impossible de se retirer actuellement");
         }
+        verifierTourJoueur(partie, idJoueur);
 
-        //  Trouver la dernière enchère du joueur pour la manche en cours
-        List<Enchere> encheres = enchereRepository.findByIdPartieAndMancheOrderByDateEnchereAsc(idPartie, partie.getMancheCourante());
 
-        Enchere derniereEnchere = encheres.stream()
-                .filter(e -> e.getIdJoueur().equals(idJoueur))
-                .reduce((first, second) -> second) // Prend la dernière
-                .orElse(null);
-
-        if (derniereEnchere == null) {
-            throw new RuntimeException("Vous n'avez pas encore enchéri");
-        }
-
-        //  Marquer l'enchère comme retirée
-        derniereEnchere.setRetire(true);
-        enchereRepository.save(derniereEnchere);
-
-        //  Vérifier s'il ne reste qu'un seul joueur non retiré
-        long nbRetires = enchereRepository.countByIdPartieAndMancheAndRetireTrue(idPartie, partie.getMancheCourante());
-        long nbParticipants = participationRepository.countByIdPartie(idPartie);
-
-        if (nbRetires >= nbParticipants - 1) {
-            // Un seul joueur reste, on passe en phase de DEFI
-            partie.setPhase(PhaseDeJeu.DEFI);
-            partieRepository.save(partie);
+        executerRetrait(partie, idJoueur);
+        if (partie.getPhase() == PhaseDeJeu.ENCHERE) {
+            passerAuJoueurSuivant(partie);
         }
     }
+    // Méthodes internes partagées entre Humains et IA
+
+    private void executerPose(Partie partie, Long idJoueur, TypeTuile typeSouhaite) {
+        List<Tuile> tuiles = tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(partie.getId(), idJoueur);
+
+        Tuile tuileAPoser = tuiles.stream()
+                .filter(Tuile::isFaceCachee)
+                .filter(t -> typeSouhaite == null || t.getType() == typeSouhaite)
+                .findFirst()
+                .orElseGet(() -> tuiles.stream().filter(Tuile::isFaceCachee).findFirst()
+                        .orElseThrow(() -> new RuntimeException("Vous n'avez plus de tuiles à poser")));
+
+        tuileAPoser.setFaceCachee(false);
+        tuileRepository.save(tuileAPoser);
+    }
+
+    private void executerEnchere(Partie partie, Long idJoueur, int montant) {
+        boolean aPoseTuile = tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(partie.getId(), idJoueur)
+                .stream().anyMatch(t -> !t.isFaceCachee());
+        if (!aPoseTuile) {
+            throw new RuntimeException("Vous devez poser au moins une tuile avant d'enchérir");
+        }
+
+        int enchereActuelle = (partie.getEnchereMax() == null ? 0 : partie.getEnchereMax());
+        long totalTuilesPosees = tuileRepository.findByIdPartie(partie.getId()).stream().filter(t -> !t.isFaceCachee()).count();
+
+        if (montant <= enchereActuelle) {
+            throw new RuntimeException("L'enchère doit être supérieure à l'enchère actuelle (" + enchereActuelle + ")");
+        }
+        if (montant > totalTuilesPosees) {
+            throw new RuntimeException("L'enchère ne peut pas dépasser le nombre de tuiles posées (" + totalTuilesPosees + ")");
+        }
+
+        Enchere enchere = new Enchere();
+        enchere.setIdPartie(partie.getId());
+        enchere.setIdJoueur(idJoueur);
+        enchere.setValeur(montant);
+        enchere.setManche(partie.getMancheCourante());
+        enchere.setRetire(false);
+        enchereRepository.save(enchere);
+
+        partie.setEnchereMax(montant);
+        partie.setPhase(PhaseDeJeu.ENCHERE);
+        partieRepository.save(partie);
+
+        // Si le plafond maximum est atteint, on passe directement au défi
+        if (montant == totalTuilesPosees) {
+            partie.setPhase(PhaseDeJeu.DEFI);
+            partieRepository.save(partie);
+            gererDefiSiIa(partie, idJoueur);
+        }
+    }
+
+    private void executerRetrait(Partie partie, Long idJoueur) {
+        List<Enchere> encheres = enchereRepository.findByIdPartieAndMancheOrderByDateEnchereAsc(partie.getId(), partie.getMancheCourante());
+        Enchere derniereEnchere = encheres.stream()
+                .filter(e -> e.getIdJoueur().equals(idJoueur))
+                .reduce((first, second) -> second)
+                .orElse(null);
+
+        if (derniereEnchere != null) {
+            derniereEnchere.setRetire(true);
+            enchereRepository.save(derniereEnchere);
+        } else {
+            Enchere retrait = new Enchere();
+            retrait.setIdPartie(partie.getId());
+            retrait.setIdJoueur(idJoueur);
+            retrait.setValeur(0);
+            retrait.setManche(partie.getMancheCourante());
+            retrait.setRetire(true);
+            enchereRepository.save(retrait);
+        }
+
+        long nbRetires = enchereRepository.countByIdPartieAndMancheAndRetireTrue(partie.getId(), partie.getMancheCourante());
+        List<Participation> actifs = participationRepository.findByIdPartieOrderByPositionAsc(partie.getId())
+                .stream().filter(p -> p.getTuilesRestantes() > 0).toList();
+
+        if (nbRetires >= actifs.size() - 1) {
+            partie.setPhase(PhaseDeJeu.DEFI);
+            partieRepository.save(partie);
+
+            // Retrouver le gagnant de l'enchère
+            Enchere gagnante = enchereRepository.findByIdPartieAndMancheOrderByDateEnchereAsc(partie.getId(), partie.getMancheCourante())
+                    .stream()
+                    .filter(e -> !e.isRetire() && e.getValeur() > 0)
+                    .reduce((first, second) -> second)
+                    .orElse(null);
+
+            if (gagnante != null) {
+                gererDefiSiIa(partie, gagnante.getIdJoueur());
+            }
+        }
+    }
+
+    private void passerAuJoueurSuivant(Partie partie) {
+        while (partie.getStatut() == StatutPartie.EN_COURS && partie.getPhase() != PhaseDeJeu.DEFI) {
+            List<Participation> participants = participationRepository.findByIdPartieOrderByPositionAsc(partie.getId());
+            if (participants.isEmpty()) return;
+
+            int nbTotal = participants.size();
+            int indexActuel = (partie.getJoueurCourant() == null ? 0 : partie.getJoueurCourant());
+            Participation prochainJoueur = null;
+
+            for (int i = 1; i <= nbTotal; i++) {
+                int prochainIndex = (indexActuel + i) % nbTotal;
+                Participation candidat = participants.get(prochainIndex);
+
+                if (candidat.getTuilesRestantes() <= 0) continue;
+
+                if (partie.getPhase() == PhaseDeJeu.ENCHERE) {
+                    boolean dejaRetire = enchereRepository
+                            .findByIdPartieAndMancheOrderByDateEnchereAsc(partie.getId(), partie.getMancheCourante())
+                            .stream()
+                            .anyMatch(e -> e.getIdJoueur().equals(candidat.getIdJoueur()) && e.isRetire());
+                    if (dejaRetire) continue;
+                }
+
+                partie.setJoueurCourant(prochainIndex);
+                partieRepository.save(partie);
+                prochainJoueur = candidat;
+                break;
+            }
+
+            if (prochainJoueur == null || !prochainJoueur.isEstIa()) {
+                break;
+            }
+
+            PlayActionRequest coupIa = iaService.deciderCoup(partie.getId(), prochainJoueur.getIdJoueur());
+            switch (coupIa.getAction()) {
+                case POSER_TUILE -> executerPose(partie, prochainJoueur.getIdJoueur(), coupIa.getTypeTuile());
+                case ENCHERIR -> executerEnchere(partie, prochainJoueur.getIdJoueur(), coupIa.getValeur());
+                case SE_RETIRER -> executerRetrait(partie, prochainJoueur.getIdJoueur());
+            }
+        }
+    }
+
+    private void gererDefiSiIa(Partie partie, Long idVainqueurEnchere) {
+        participationRepository.findByIdPartieAndIdJoueur(partie.getId(), idVainqueurEnchere).ifPresent(p -> {
+            if (p.isEstIa()) {
+                resoudreDefi(partie.getId(), idVainqueurEnchere, partie.getEnchereMax());
+            }
+        });
+    }
+
     // Résoudre un défi
     @Override
     @Transactional
@@ -320,6 +469,10 @@ public class GameServiceImpl implements GameService {
             // Le joueur perd un disque
             participation.setTuilesRestantes(participation.getTuilesRestantes() - 1);
             participationRepository.save(participation);
+            List<Tuile> tuilesJoueur = tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(idPartie, idJoueur);
+            if (!tuilesJoueur.isEmpty()) {
+                tuileRepository.delete(tuilesJoueur.get(tuilesJoueur.size() - 1));
+            }
         } else {
             // Le joueur gagne un point
             participation.setScore(participation.getScore() + 1);
@@ -344,7 +497,6 @@ public class GameServiceImpl implements GameService {
                 partie.setStatut(StatutPartie.TERMINEE);
                 partie.setDateFin(java.time.LocalDateTime.now());
                 partieRepository.save(partie);
-                System.out.println(">>> PARTIE TERMINÉE : Le joueur " + p.getIdJoueur() + " a gagné !");
                 return;
             }
             // Élimination : plus de tuiles
@@ -361,7 +513,6 @@ public class GameServiceImpl implements GameService {
             partie.setStatut(StatutPartie.TERMINEE);
             partie.setDateFin(java.time.LocalDateTime.now());
             partieRepository.save(partie);
-            System.out.println(">>> PARTIE TERMINÉE : Il ne reste qu'un joueur.");
         }
     }
 
@@ -380,6 +531,18 @@ public class GameServiceImpl implements GameService {
         partie.setEnchereMax(null);
         partie.setJoueurCourant(0);
         partieRepository.save(partie);
+
+        List<Participation> participants = participationRepository.findByIdPartieOrderByPositionAsc(partie.getId());
+        if (!participants.isEmpty()) {
+            Participation premier = participants.get(0);
+            if (premier.getTuilesRestantes() <= 0) {
+                passerAuJoueurSuivant(partie);
+            } else if (premier.isEstIa()) {
+                PlayActionRequest coupIa = iaService.deciderCoup(partie.getId(), premier.getIdJoueur());
+                executerPose(partie, premier.getIdJoueur(), coupIa.getTypeTuile());
+                passerAuJoueurSuivant(partie);
+            }
+        }
     }
 
     // Méthode pour signaler un joueur

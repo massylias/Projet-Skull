@@ -1,12 +1,13 @@
 package fr.info.orleans.projetinfo.game.services;
 
+import fr.info.orleans.projetinfo.game.dtos.PlayActionRequest;
+import fr.info.orleans.projetinfo.game.dtos.TypeAction;
 import fr.info.orleans.projetinfo.game.model.*;
 import fr.info.orleans.projetinfo.game.repository.EnchereRepository;
 import fr.info.orleans.projetinfo.game.repository.ParticipationRepository;
 import fr.info.orleans.projetinfo.game.repository.PartieRepository;
 import fr.info.orleans.projetinfo.game.repository.TuileRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -16,111 +17,67 @@ public class IaService {
     private final PartieRepository partieRepository;
     private final ParticipationRepository participationRepository;
     private final TuileRepository tuileRepository;
-    private final EnchereRepository enchereRepository;
     private final Random random = new Random();
 
     public IaService(PartieRepository partieRepository,
                      ParticipationRepository participationRepository,
-                     TuileRepository tuileRepository,
-                     EnchereRepository enchereRepository) {
+                     TuileRepository tuileRepository) {
         this.partieRepository = partieRepository;
         this.participationRepository = participationRepository;
         this.tuileRepository = tuileRepository;
-        this.enchereRepository = enchereRepository;
     }
 
-    @Transactional
-    public void jouerTour(Long idPartie, Long idJoueurIa) {
+    public PlayActionRequest deciderCoup(Long idPartie, Long idJoueurIa) {
         Partie partie = partieRepository.findById(idPartie)
                 .orElseThrow(() -> new RuntimeException("Partie introuvable"));
 
-        if (partie.getStatut() != StatutPartie.EN_COURS) return;
+        List<Tuile> toutesTuilesIa = tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(idPartie, idJoueurIa);
+        List<Tuile> tuilesPoseesIa = toutesTuilesIa.stream().filter(t -> !t.isFaceCachee()).toList();
+        List<Tuile> tuilesEnMainIa = toutesTuilesIa.stream().filter(Tuile::isFaceCachee).toList();
 
-        // 1. Si l'IA doit poser une tuile (phase POSE)
+        int enchereActuelle = (partie.getEnchereMax() == null ? 0 : partie.getEnchereMax());
+        int totalTuilesPosees = compterTotalTuilesPosees(idPartie);
+
+        //  Phase POSE
         if (partie.getPhase() == PhaseDeJeu.POSE) {
-            // 80% de chance de poser, 20% d'enchérir
+            if (tuilesPoseesIa.isEmpty()) {
+                return choisirTuileAPoser(tuilesEnMainIa);
+            }
+            if (tuilesEnMainIa.isEmpty()) {
+                return new PlayActionRequest(TypeAction.ENCHERIR, null, enchereActuelle + 1);
+            }
             if (random.nextInt(100) < 80) {
-                poserTuile(idPartie, idJoueurIa);
+                return choisirTuileAPoser(tuilesEnMainIa);
             } else {
-                // L'IA enchérit (elle annonce son nombre de tuiles restantes)
-                encherir(idPartie, idJoueurIa);
+                return new PlayActionRequest(TypeAction.ENCHERIR, null, enchereActuelle + 1);
             }
         }
-        // 2. Si l'IA doit enchérir ou se retirer (phase ENCHERE)
-        else if (partie.getPhase() == PhaseDeJeu.ENCHERE) {
-            // Vérifier si l'IA a posé un crâne
-            List<Tuile> tuilesPosees = tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(idPartie, idJoueurIa)
-                    .stream().filter(t -> !t.isFaceCachee()).toList();
-            boolean aPoseCrane = tuilesPosees.stream().anyMatch(t -> t.getType() == TypeTuile.CRANE);
 
-            int chanceSurenchere = aPoseCrane ? 20 : 70; // 20% si crâne, 70% si fleurs
+        //  Phase ENCHERE
+        if (enchereActuelle >= totalTuilesPosees) {
+            return new PlayActionRequest(TypeAction.SE_RETIRER, null, null);
+        }
 
-            if (random.nextInt(100) < chanceSurenchere) {
-                // Surenchérir (+1 par rapport à l'enchère max)
-                int nouvelleEnchere = (partie.getEnchereMax() == null ? 1 : partie.getEnchereMax() + 1);
-                encherir(idPartie, idJoueurIa, nouvelleEnchere);
-            } else {
-                // Se retirer
-                seRetirer(idPartie, idJoueurIa);
-            }
+        boolean aPoseCrane = tuilesPoseesIa.stream().anyMatch(t -> t.getType() == TypeTuile.CRANE);
+        int chanceSurenchere = aPoseCrane ? 20 : 70;
+
+        if (random.nextInt(100) < chanceSurenchere) {
+            return new PlayActionRequest(TypeAction.ENCHERIR, null, enchereActuelle + 1);
+        } else {
+            return new PlayActionRequest(TypeAction.SE_RETIRER, null, null);
         }
     }
 
-    private void poserTuile(Long idPartie, Long idJoueur) {
-        List<Tuile> tuiles = tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(idPartie, idJoueur);
-        Tuile tuileAPoser = tuiles.stream().filter(Tuile::isFaceCachee).findFirst().orElse(null);
-
-        if (tuileAPoser != null) {
-            tuileAPoser.setFaceCachee(false);
-            tuileRepository.save(tuileAPoser);
-
-            Participation participation = participationRepository.findByIdPartieAndIdJoueur(idPartie, idJoueur).get();
-            participation.setTuilesRestantes(participation.getTuilesRestantes() - 1);
-            participationRepository.save(participation);
-        }
+    private PlayActionRequest choisirTuileAPoser(List<Tuile> tuilesEnMain) {
+        Tuile choisie = tuilesEnMain.get(random.nextInt(tuilesEnMain.size()));
+        return new PlayActionRequest(TypeAction.POSER_TUILE, choisie.getType(), null);
     }
 
-    private void encherir(Long idPartie, Long idJoueur) {
-        Partie partie = partieRepository.findById(idPartie).get();
-        encherir(idPartie, idJoueur, (partie.getEnchereMax() == null ? 1 : partie.getEnchereMax() + 1));
-    }
-
-    private void encherir(Long idPartie, Long idJoueur, int montant) {
-        Partie partie = partieRepository.findById(idPartie).get();
-
-        Enchere enchere = new Enchere();
-        enchere.setIdPartie(idPartie);
-        enchere.setIdJoueur(idJoueur);
-        enchere.setValeur(montant);
-        enchere.setManche(partie.getMancheCourante());
-        enchereRepository.save(enchere);
-
-        partie.setEnchereMax(montant);
-        partie.setPhase(PhaseDeJeu.ENCHERE); // On passe en phase d'enchère
-        partieRepository.save(partie);
-    }
-
-    private void seRetirer(Long idPartie, Long idJoueur) {
-        Partie partie = partieRepository.findById(idPartie).get();
-
-        List<Enchere> encheres = enchereRepository.findByIdPartieAndMancheOrderByDateEnchereAsc(idPartie, partie.getMancheCourante());
-        Enchere derniereEnchere = encheres.stream()
-                .filter(e -> e.getIdJoueur().equals(idJoueur))
-                .reduce((first, second) -> second)
-                .orElse(null);
-
-        if (derniereEnchere != null) {
-            derniereEnchere.setRetire(true);
-            enchereRepository.save(derniereEnchere);
-        }
-
-        long nbRetires = enchereRepository.countByIdPartieAndMancheAndRetireTrue(idPartie, partie.getMancheCourante());
-        long nbParticipants = participationRepository.countByIdPartie(idPartie);
-
-        if (nbRetires >= nbParticipants - 1) {
-            partie.setPhase(PhaseDeJeu.DEFI);
-            partieRepository.save(partie);
-        }
+    private int compterTotalTuilesPosees(Long idPartie) {
+        return participationRepository.findByIdPartieOrderByPositionAsc(idPartie).stream()
+                .mapToInt(p -> (int) tuileRepository.findByIdPartieAndIdJoueurOrderByPositionAsc(idPartie, p.getIdJoueur())
+                        .stream().filter(t -> !t.isFaceCachee()).count())
+                .sum();
     }
 
 }
