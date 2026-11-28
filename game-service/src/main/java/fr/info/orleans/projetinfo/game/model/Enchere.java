@@ -15,7 +15,7 @@ public class Enchere {
     private Long idPartie;
 
     @Column(nullable = false)
-    private Long idParticipation;
+    private Long idJoueur;
 
     @Column(nullable = false)
     private int valeur;
@@ -40,12 +40,12 @@ public class Enchere {
         this.idPartie = idpartie;
     }
 
-    public Long getIdParticipation() {
-        return idParticipation;
+    public Long getIdJoueur() {
+        return idJoueur;
     }
 
-    public void setIdParticipation(Long idParticipation) {
-        this.idParticipation = idParticipation;
+    public void setIdJoueur(Long idJoueur) {
+        this.idJoueur = idJoueur;
     }
 
     public int getValeur() {
