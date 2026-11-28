@@ -34,4 +34,7 @@ public interface GameService {
 
     // Résoudre un défi
     void resoudreDefi(Long idPartie, Long idJoueur, int nombreTuilesARetourner);
+
+    // Signaler un Joueur
+    void signalerJoueur(Long idPartie, Long idJoueurSignaleur, Long idJoueurSignale, String raison);
 }

@@ -96,5 +96,15 @@ public class GameController {
         iaService.jouerTour(id, idJoueurIa);
         return ResponseEntity.ok().build();
     }
+
+    // Signaler un Joueur
+    @PostMapping("/{id}/report")
+    public ResponseEntity<Void> signalerJoueur(@PathVariable Long id,
+                                               @RequestParam Long idJoueurSignaleur,
+                                               @RequestParam Long idJoueurSignale,
+                                               @RequestParam String raison) {
+        gameService.signalerJoueur(id, idJoueurSignaleur, idJoueurSignale, raison);
+        return ResponseEntity.ok().build();
+    }
 }
 

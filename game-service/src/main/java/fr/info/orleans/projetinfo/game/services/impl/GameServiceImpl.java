@@ -4,10 +4,7 @@ import fr.info.orleans.projetinfo.game.dtos.CreateGameRequest;
 import fr.info.orleans.projetinfo.game.dtos.GameDTO;
 import fr.info.orleans.projetinfo.game.dtos.JoinGameRequest;
 import fr.info.orleans.projetinfo.game.model.*;
-import fr.info.orleans.projetinfo.game.repository.EnchereRepository;
-import fr.info.orleans.projetinfo.game.repository.ParticipationRepository;
-import fr.info.orleans.projetinfo.game.repository.PartieRepository;
-import fr.info.orleans.projetinfo.game.repository.TuileRepository;
+import fr.info.orleans.projetinfo.game.repository.*;
 import fr.info.orleans.projetinfo.game.services.GameService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +23,14 @@ public class GameServiceImpl implements GameService {
 
     private final EnchereRepository enchereRepository;
 
-    public GameServiceImpl(PartieRepository partieRepository, ParticipationRepository participationRepository,  TuileRepository tuileRepository,  EnchereRepository enchereRepository) {
+    private final SignalementRepository signalementRepository;
+
+    public GameServiceImpl(PartieRepository partieRepository, ParticipationRepository participationRepository,  TuileRepository tuileRepository,  EnchereRepository enchereRepository, SignalementRepository signalementRepository) {
         this.partieRepository = partieRepository;
         this.participationRepository = participationRepository;
         this.tuileRepository = tuileRepository;
         this.enchereRepository = enchereRepository;
+        this.signalementRepository = signalementRepository;
     }
 
     @Override
@@ -225,7 +225,7 @@ public class GameServiceImpl implements GameService {
 
         // Mettre à jour la partie
         partie.setEnchereMax(montant);
-        
+
 
         //  Éviter le null
         int courant = (partie.getJoueurCourant() == null ? 0 : partie.getJoueurCourant());
@@ -380,6 +380,48 @@ public class GameServiceImpl implements GameService {
         partie.setEnchereMax(null);
         partie.setJoueurCourant(0);
         partieRepository.save(partie);
+    }
+
+    // Méthode pour signaler un joueur
+    @Override
+    @Transactional
+    public void signalerJoueur(Long idPartie, Long idJoueurSignaleur, Long idJoueurSignale, String raison) {
+        //  Vérifier que la partie existe et a démarré (EN_COURS ou TERMINEE pour le signalement à posteriori)
+        Partie partie = partieRepository.findById(idPartie)
+                .orElseThrow(() -> new RuntimeException("Partie introuvable"));
+
+        if (partie.getStatut() == StatutPartie.EN_ATTENTE) {
+            throw new RuntimeException("Impossible de signaler un joueur avant le début de la partie");
+        }
+
+        //  Empêcher un joueur de se signaler lui-même
+        if (idJoueurSignaleur.equals(idJoueurSignale)) {
+            throw new RuntimeException("Vous ne pouvez pas vous signaler vous-même");
+        }
+
+        //  Vérifier que les deux joueurs ont bien participé à cette partie
+        if (!participationRepository.existsByIdPartieAndIdJoueur(idPartie, idJoueurSignaleur)) {
+            throw new RuntimeException("Vous ne participez pas à cette partie");
+        }
+        if (!participationRepository.existsByIdPartieAndIdJoueur(idPartie, idJoueurSignale)) {
+            throw new RuntimeException("Le joueur signalé n'a pas participé à cette partie");
+        }
+
+        //  Vérifier qu'un signalement identique n'existe pas déjà
+        if (signalementRepository.existsByIdPartieAndIdJoueurSignaleAndIdJoueurSignaleur(
+                idPartie, idJoueurSignale, idJoueurSignaleur)) {
+            throw new RuntimeException("Vous avez déjà signalé ce joueur pour cette partie");
+        }
+
+        //  Créer le signalement
+        Signalement signalement = new Signalement();
+        signalement.setIdPartie(idPartie);
+        signalement.setIdJoueurSignaleur(idJoueurSignaleur);
+        signalement.setIdJoueurSignale(idJoueurSignale);
+        signalement.setRaison(raison);
+        signalement.setTraite(false);
+
+        signalementRepository.save(signalement);
     }
 
 }
