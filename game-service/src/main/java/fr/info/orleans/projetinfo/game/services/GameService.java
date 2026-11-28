@@ -28,4 +28,10 @@ public interface GameService {
 
     // Lancer une enchère
     void bid(Long idPartie, Long idJoueur, int montant);
+
+    // Se retirer lors d'une enchère
+    void seRetirer(Long idPartie, Long idJoueur);
+
+    // Résoudre un défi
+    void resoudreDefi(Long idPartie, Long idJoueur, int nombreTuilesARetourner);
 }

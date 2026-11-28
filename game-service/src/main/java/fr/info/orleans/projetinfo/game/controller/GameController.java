@@ -71,5 +71,20 @@ public class GameController {
         gameService.bid(id, idJoueur, montant);
         return ResponseEntity.ok().build();
     }
+
+    // Se retirer de l'enchère
+    @PostMapping("/{id}/se-retirer")
+    public ResponseEntity<Void> seRetirer(@PathVariable Long id, @RequestParam Long idJoueur) {
+        gameService.seRetirer(id, idJoueur);
+        return ResponseEntity.ok().build();
+    }
+    // Résoudre un défi
+    @PostMapping("/{id}/defi")
+    public ResponseEntity<Void> resoudreDefi(@PathVariable Long id,
+                                             @RequestParam Long idJoueur,
+                                             @RequestParam int nombreTuiles) {
+        gameService.resoudreDefi(id, idJoueur, nombreTuiles);
+        return ResponseEntity.ok().build();
+    }
 }
 

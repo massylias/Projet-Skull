@@ -12,6 +12,7 @@ import fr.info.orleans.projetinfo.game.services.GameService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -224,6 +225,113 @@ public class GameServiceImpl implements GameService {
         // Mettre à jour la partie
         partie.setEnchereMax(montant);
         partie.setJoueurCourant(partie.getJoueurCourant() + 1); // Simplifié
+        partieRepository.save(partie);
+    }
+
+    // Méthode pour se retirer (lors d'une enchère)
+    @Override
+    @Transactional
+    public void seRetirer(Long idPartie, Long idJoueur) {
+        Partie partie = partieRepository.findById(idPartie)
+                .orElseThrow(() -> new RuntimeException("Partie introuvable"));
+
+        if (partie.getStatut() != StatutPartie.EN_COURS) {
+            throw new RuntimeException("La partie n'est pas en cours");
+        }
+
+        //  Trouver la dernière enchère du joueur pour la manche en cours
+        List<Enchere> encheres = enchereRepository.findByIdPartieAndMancheOrderByDateEnchereAsc(idPartie, partie.getMancheCourante());
+
+        Enchere derniereEnchere = encheres.stream()
+                .filter(e -> e.getIdJoueur().equals(idJoueur))
+                .reduce((first, second) -> second) // Prend la dernière
+                .orElse(null);
+
+        if (derniereEnchere == null) {
+            throw new RuntimeException("Vous n'avez pas encore enchéri");
+        }
+
+        //  Marquer l'enchère comme retirée
+        derniereEnchere.setRetire(true);
+        enchereRepository.save(derniereEnchere);
+
+        //  Vérifier s'il ne reste qu'un seul joueur non retiré
+        long nbRetires = enchereRepository.countByIdPartieAndMancheAndRetireTrue(idPartie, partie.getMancheCourante());
+        long nbParticipants = participationRepository.countByIdPartie(idPartie);
+
+        if (nbRetires >= nbParticipants - 1) {
+            // Un seul joueur reste, on passe en phase de DEFI
+            partie.setPhase(PhaseDeJeu.DEFI);
+            partieRepository.save(partie);
+        }
+    }
+    // Résoudre un défi
+    @Override
+    @Transactional
+    public void resoudreDefi(Long idPartie, Long idJoueur, int nombreTuilesARetourner) {
+        Partie partie = partieRepository.findById(idPartie)
+                .orElseThrow(() -> new RuntimeException("Partie introuvable"));
+
+        if (partie.getStatut() != StatutPartie.EN_COURS) {
+            throw new RuntimeException("La partie n'est pas en cours");
+        }
+
+        // Récupérer toutes les tuiles posées (faceCachee = false) pour cette partie
+        List<Tuile> tuilesPosees = tuileRepository.findByIdPartie(idPartie)
+                .stream().filter(t -> !t.isFaceCachee()).toList();
+
+        if (tuilesPosees.size() < nombreTuilesARetourner) {
+            throw new RuntimeException("Il n'y a pas assez de tuiles posées pour ce défi");
+        }
+
+        // Le joueur commence par sa propre pile
+        List<Tuile> aRetourner = new ArrayList<>(
+                tuilesPosees.stream().filter(t -> t.getIdJoueur().equals(idJoueur)).toList()
+        );
+
+        // Compléter avec les autres joueurs si besoin
+        if (aRetourner.size() < nombreTuilesARetourner) {
+            List<Tuile> autres = tuilesPosees.stream()
+                    .filter(t -> !t.getIdJoueur().equals(idJoueur))
+                    .limit(nombreTuilesARetourner - aRetourner.size())
+                    .toList();
+            aRetourner.addAll(autres);
+        }
+
+        // Vérifier s'il y a un crâne parmi les tuiles retournées
+        boolean craneTrouve = aRetourner.stream()
+                .anyMatch(t -> t.getType() == TypeTuile.CRANE);
+
+        Participation participation = participationRepository.findByIdPartieAndIdJoueur(idPartie, idJoueur)
+                .orElseThrow(() -> new RuntimeException("Participation introuvable"));
+
+        if (craneTrouve) {
+            // Le joueur perd un disque
+            participation.setTuilesRestantes(participation.getTuilesRestantes() - 1);
+            participationRepository.save(participation);
+        } else {
+            // Le joueur gagne un point
+            participation.setScore(participation.getScore() + 1);
+            participationRepository.save(participation);
+        }
+
+        // Réinitialiser la manche (remettre les tuiles en main, passer à la manche suivante)
+        resetManche(partie);
+    }
+
+    private void resetManche(Partie partie) {
+        // Remettre toutes les tuiles en main
+        List<Tuile> tuiles = tuileRepository.findByIdPartie(partie.getId());
+        for (Tuile t : tuiles) {
+            t.setFaceCachee(true);
+            tuileRepository.save(t);
+        }
+
+        // Incrémenter la manche
+        partie.setMancheCourante(partie.getMancheCourante() + 1);
+        partie.setPhase(PhaseDeJeu.POSE);
+        partie.setEnchereMax(null);
+        partie.setJoueurCourant(0);
         partieRepository.save(partie);
     }
 
