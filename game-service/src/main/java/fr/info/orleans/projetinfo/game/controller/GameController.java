@@ -4,6 +4,7 @@ import fr.info.orleans.projetinfo.game.dtos.CreateGameRequest;
 import fr.info.orleans.projetinfo.game.dtos.GameDTO;
 import fr.info.orleans.projetinfo.game.dtos.GameStateDTO;
 import fr.info.orleans.projetinfo.game.dtos.JoinGameRequest;
+import fr.info.orleans.projetinfo.game.model.TypeTuile;
 import fr.info.orleans.projetinfo.game.services.GameService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class GameController {
         return ResponseEntity.ok(gameService.getGames());
     }
 
-    //
+    // Voir l'état d'une partie
     @GetMapping("/{id}")
     public ResponseEntity<GameStateDTO> getGameState(@PathVariable Long id,
                                                      @RequestParam(required = false) Long idJoueur) {
@@ -66,8 +67,9 @@ public class GameController {
 
     // Poser une tuile
     @PostMapping("/{id}/play-tuile")
-    public ResponseEntity<Void> playTuile(@PathVariable Long id, @RequestParam Long idJoueur) {
-        gameService.playTuile(id, idJoueur);
+    public ResponseEntity<Void> playTuile(@PathVariable Long id, @RequestParam Long idJoueur,
+                                          @RequestParam(required = false) TypeTuile typeTuile) {
+        gameService.playTuile(id, idJoueur, typeTuile);
         return ResponseEntity.ok().build();
     }
 

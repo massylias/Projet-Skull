@@ -232,7 +232,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional
-    public void playTuile(Long idPartie, Long idJoueur) {
+    public void playTuile(Long idPartie, Long idJoueur, TypeTuile typeTuile) {
         Partie partie = partieRepository.findById(idPartie)
                 .orElseThrow(() -> new RuntimeException("Partie introuvable"));
 
@@ -241,7 +241,7 @@ public class GameServiceImpl implements GameService {
         }
         verifierTourJoueur(partie, idJoueur);
 
-        executerPose(partie, idJoueur, null);
+        executerPose(partie, idJoueur, typeTuile);
         passerAuJoueurSuivant(partie);
     }
 
@@ -432,8 +432,8 @@ public class GameServiceImpl implements GameService {
         Partie partie = partieRepository.findById(idPartie)
                 .orElseThrow(() -> new RuntimeException("Partie introuvable"));
 
-        if (partie.getStatut() != StatutPartie.EN_COURS) {
-            throw new RuntimeException("La partie n'est pas en cours");
+        if (partie.getStatut() != StatutPartie.EN_COURS || partie.getPhase() != PhaseDeJeu.DEFI) {
+            throw new RuntimeException("Aucun défi n'est en cours");
         }
 
         // Récupérer toutes les tuiles posées (faceCachee = false) pour cette partie

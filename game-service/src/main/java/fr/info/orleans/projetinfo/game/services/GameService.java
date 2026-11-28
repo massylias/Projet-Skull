@@ -4,6 +4,7 @@ import fr.info.orleans.projetinfo.game.dtos.CreateGameRequest;
 import fr.info.orleans.projetinfo.game.dtos.GameDTO;
 import fr.info.orleans.projetinfo.game.dtos.GameStateDTO;
 import fr.info.orleans.projetinfo.game.dtos.JoinGameRequest;
+import fr.info.orleans.projetinfo.game.model.TypeTuile;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public interface GameService {
     void startGame(Long idPartie);
 
     // Poser une tuile
-    void playTuile(Long idPartie, Long idJoueur);
+    void playTuile(Long idPartie, Long idJoueur, TypeTuile  typeTuile);
 
     // Lancer une enchère
     void bid(Long idPartie, Long idJoueur, int montant);
