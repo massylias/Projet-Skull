@@ -19,4 +19,10 @@ public interface GameService {
 
     //Quitter une partie
     void leaveGame(Long idPartie, Long idJoueur);
+
+    // Commencer la partie
+    void startGame(Long idPartie);
+
+    // Poser une tuile
+    void playTuile(Long idPartie, Long idJoueur);
 }

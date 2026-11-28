@@ -49,4 +49,18 @@ public class GameController {
         return ResponseEntity.ok().build();
     }
 
+    // Démarrer la partie
+    @PostMapping("/{id}/start")
+    public ResponseEntity<Void> startGame(@PathVariable Long id) {
+        gameService.startGame(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // Poser une tuile
+    @PostMapping("/{id}/play-tuile")
+    public ResponseEntity<Void> playTuile(@PathVariable Long id, @RequestParam Long idJoueur) {
+        gameService.playTuile(id, idJoueur);
+        return ResponseEntity.ok().build();
+    }
 }
+
