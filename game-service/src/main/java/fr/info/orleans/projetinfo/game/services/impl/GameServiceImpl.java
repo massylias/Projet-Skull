@@ -209,8 +209,9 @@ public class GameServiceImpl implements GameService {
             throw new RuntimeException("La partie n'est pas en cours");
         }
 
-        // Vérifier que l'enchère est plus haute que la précédente
-        if (partie.getEnchereMax() != null && montant <= partie.getEnchereMax()) {
+        //  Vérifier l'enchère
+        int enchereActuelle = (partie.getEnchereMax() == null ? 0 : partie.getEnchereMax());
+        if (montant <= enchereActuelle) {
             throw new RuntimeException("L'enchère doit être supérieure à l'enchère actuelle");
         }
 
@@ -224,8 +225,18 @@ public class GameServiceImpl implements GameService {
 
         // Mettre à jour la partie
         partie.setEnchereMax(montant);
-        partie.setJoueurCourant(partie.getJoueurCourant() + 1); // Simplifié
+        
+
+        //  Éviter le null
+        int courant = (partie.getJoueurCourant() == null ? 0 : partie.getJoueurCourant());
+        partie.setJoueurCourant(courant + 1);
+
+        //  Passer en phase ENCHERE
+        partie.setPhase(PhaseDeJeu.ENCHERE);
+
         partieRepository.save(partie);
+
+
     }
 
     // Méthode pour se retirer (lors d'une enchère)
